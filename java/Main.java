@@ -1,3 +1,4 @@
+import java.util.Optional;
 import java.util.Scanner;
 
 /**
@@ -22,11 +23,14 @@ public class Main {
                     viewLeads(tracker);
                     break;
                 case "3":
+                    findLeadByEmail(scanner, tracker);
+                    break;
+                case "4":
                     running = false;
                     System.out.println("Goodbye!");
                     break;
                 default:
-                    System.out.println("Invalid option. Please choose 1, 2, or 3.");
+                    System.out.println("Invalid option. Please choose 1, 2, 3, or 4.");
             }
         }
 
@@ -37,7 +41,8 @@ public class Main {
         System.out.println("\n=== Simple Lead Tracker ===");
         System.out.println("1. Add a lead");
         System.out.println("2. View all leads");
-        System.out.println("3. Exit");
+        System.out.println("3. Find a lead by email");
+        System.out.println("4. Exit");
         System.out.print("Choose an option: ");
     }
 
@@ -64,6 +69,21 @@ public class Main {
             System.out.println("Lead added successfully.");
         } catch (IllegalArgumentException e) {
             System.out.println("Could not add lead: " + e.getMessage());
+        }
+    }
+
+    private static void findLeadByEmail(Scanner scanner, LeadTracker tracker) {
+        System.out.print("Enter email to search for: ");
+        String email = scanner.nextLine();
+
+        Optional<Lead> result = tracker.findByEmail(email);
+        if (result.isPresent()) {
+            Lead lead = result.get();
+            String priority = PriorityCalculator.calculate(lead.score());
+            System.out.printf("Found: Name: %s | Email: %s | Score: %d | Priority: %s%n",
+                    lead.name(), lead.email(), lead.score(), priority);
+        } else {
+            System.out.println("No lead found with that email. Did you add '@gmail.com' at the end? ");
         }
     }
 
